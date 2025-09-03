@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redux Counter & Todo (Vanilla JS)</title>
+</head>
+<body>
+  <h1>Counter Example</h1>
+  <p>Count: <span id="value"></span></p>
+  <button id="increment">+</button>
+  <button id="decrement">-</button>
+
+  <hr />
+
+  <h1>Todo Example</h1>
+  <input type="text" id="todoInput" placeholder="Enter todo" />
+  <button id="addTodo">Add Todo</button>
+  <ul id="todoList"></ul>
+
+  <script type="module">
+    import store from "./store.js";
+
+    
+    function renderCounter() {
+      document.getElementById("value").innerText = store.getState().counter.count;
+    }
+
+
+    function renderTodos() {
+      const todos = store.getState().todo.todos;
+      const list = document.getElementById("todoList");
+      list.innerHTML = "";
+      todos.forEach((todo, index) => {
+        const li = document.createElement("li");
+        li.textContent = todo;
+        const btn = document.createElement("button");
+        btn.textContent = "❌";
+        btn.onclick = () => store.dispatch({ type: "removeTodo", index });
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+    }
+
+    
+    store.subscribe(() => {
+      renderCounter();
+      renderTodos();
+    });
+
+   
+    renderCounter();
+    renderTodos();
+
+    
+    document.getElementById("increment").onclick = () => {
+      store.dispatch({ type: "increment" });
+    };
+
+    document.getElementById("decrement").onclick = () => {
+      store.dispatch({ type: "decrement" });
+    };
+
+   
+    document.getElementById("addTodo").onclick = () => {
+      const input = document.getElementById("todoInput");
+      if (input.value.trim() !== "") {
+        store.dispatch({ type: "addTodo", payload: input.value });
+        input.value = "";
+      }
+    };
+  </script>
+</body>
+</html>
